@@ -64,7 +64,10 @@ public class World {
 						Game.player.setY(y*17);
 					}else if(pixel == 0xFFFF0400) {
 						
-						Game.entities.add(new Enemy(x*16,y*17, 16, 17, Entity.ENEMY_EN));
+						Enemy en = new Enemy(x*16,y*17, 16, 17, Entity.ENEMY_EN);
+						
+						Game.entities.add(en);
+						Game.enemies.add(en);
 					}else if(pixel == 0xFFFF6100) {
 						
 						Game.entities.add(new Weapon(x*16,y*17, 16, 17, Entity.WEAPON_EN));
