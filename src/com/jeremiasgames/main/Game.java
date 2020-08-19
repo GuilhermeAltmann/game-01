@@ -11,6 +11,8 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -18,8 +20,10 @@ import javax.swing.JFrame;
 
 import com.jeremiasgames.entities.Enemy;
 import com.jeremiasgames.entities.Entity;
+import com.jeremiasgames.entities.LifePack;
 import com.jeremiasgames.entities.Player;
 import com.jeremiasgames.graficos.Spritesheet;
+import com.jeremiasgames.graficos.UI;
 import com.jeremiasgames.world.World;
 
 public class Game extends Canvas implements Runnable,KeyListener{
@@ -44,6 +48,8 @@ public class Game extends Canvas implements Runnable,KeyListener{
 	
 	public static Player player;
 	
+	public UI ui;
+	
 	public Game() {
 		
 		rand = new Random();
@@ -51,6 +57,8 @@ public class Game extends Canvas implements Runnable,KeyListener{
 		addKeyListener(this);
 		setPreferredSize(new Dimension(WIDTH*SCALE,HEIGHT*SCALE));
 		initFrame();
+		
+		ui = new UI();
 		
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		
@@ -102,16 +110,39 @@ public class Game extends Canvas implements Runnable,KeyListener{
 	
 	private void tick() {
 	
-		for(Entity entity: entities) {
+		for(Iterator<Entity> iterator = Game.entities.iterator(); iterator.hasNext();) {
 			
-			if(entity instanceof Player) {
-				
-			}else {
-				
-			}
-			
+			Entity entity = iterator.next();
 			entity.tick();
+		}
+		
+		checkItems();
+
+	}
+	
+	public void checkItems() 
+	{
+		
+
+		for(Iterator<Entity> iterator = entities.iterator(); iterator.hasNext();) 
+		{
 			
+			Entity entity = iterator.next();
+			if(entity instanceof LifePack) 
+			{
+				
+				if(Entity.isColidding(player, entity)) {
+					
+					Player.life += 8;
+					
+					if(Player.life >= 100) {
+						
+						Player.life = 100;
+					}
+					
+					iterator.remove();
+				}
+			}
 		}
 	}
 	
@@ -143,8 +174,9 @@ public class Game extends Canvas implements Runnable,KeyListener{
 		//g.setColor(Color.WHITE);
 		//g.drawString("Olá game", 30, 30);
 		
-		Graphics2D g2 = (Graphics2D) g;
+		//Graphics2D g2 = (Graphics2D) g;
 
+		ui.render(g);
 		
 		g.dispose();
 		g = bs.getDrawGraphics();

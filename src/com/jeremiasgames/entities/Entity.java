@@ -1,10 +1,13 @@
 package com.jeremiasgames.entities;
 
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import com.jeremiasgames.main.Game;
 import com.jeremiasgames.world.Camera;
+import com.jeremiasgames.world.World;
 
 public class Entity {
 	
@@ -62,9 +65,20 @@ public class Entity {
 	
 	public void render(Graphics g) {
 		g.drawImage(sprite, getX() - Camera.x, getY() - Camera.y, null);
+		//g.setColor(Color.red);
+		//g.fillRect(getX() - Camera.x, getY() - Camera.y, width, height);
 	}
 	
 	public void tick() {
 
+	}
+	
+	public static boolean isColidding(Entity e1, Entity e2) 
+	{
+		
+		Rectangle e1Mask = new Rectangle(e1.getX(), e1.getY(), e1.getWidth(), e1.getHeight());
+		Rectangle e2Mask = new Rectangle(e2.getX(), e2.getY(), e2.getWidth(), e2.getHeight());
+		
+		return e1Mask.intersects(e2Mask);
 	}
 }

@@ -2,8 +2,7 @@ package com.jeremiasgames.entities;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-
-import javax.security.auth.x500.X500Principal;
+import java.util.Iterator;
 
 import com.jeremiasgames.main.Game;
 import com.jeremiasgames.world.Camera;
@@ -16,7 +15,7 @@ public class Player extends Entity{
 	private int dir = RIGHT_DIR;
 	public double speed = 2;
 	
-	public static int life = 100;
+	public static double life = 100, maxLife = 100;
 	
 	private int frames = 0, maxFrames = 5, index = 0, maxIndex = 3;
 	private boolean moved = false;
@@ -76,10 +75,37 @@ public class Player extends Entity{
 			
 		}
 		
+		//checkItems();
+		
 		Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/2), 0, (World.WIDTH * 16) - Game.WIDTH);
 		Camera.y = Camera.clamp(this.getY() - (Game.HEIGHT/2), 0, (World.HEIGHT * 17)  - Game.HEIGHT);
 	}
-	 
+	
+//	public void checkItems() 
+//	{
+//		
+//
+//		for(Iterator<Entity> iterator = Game.entities.iterator(); iterator.hasNext();) 
+//		{
+//			
+//			Entity entity = iterator.next();
+//			if(entity instanceof LifePack) 
+//			{
+//				
+//				if(Entity.isColidding(this, entity)) {
+//					
+//					life += 8;
+//					
+//					if(life >= 100) {
+//						
+//						life = 100;
+//					}
+//					
+//					iterator.remove();
+//				}
+//			}
+//		}
+//	}
 	
 	@Override
 	public void render(Graphics g) {
