@@ -18,6 +18,7 @@ import java.util.Random;
 
 import javax.swing.JFrame;
 
+import com.jeremiasgames.entities.Bullet;
 import com.jeremiasgames.entities.Enemy;
 import com.jeremiasgames.entities.Entity;
 import com.jeremiasgames.entities.LifePack;
@@ -62,6 +63,12 @@ public class Game extends Canvas implements Runnable,KeyListener{
 		
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		
+		initGame();
+		
+	}
+	
+	public static void initGame() {
+		
 		entities = new ArrayList<Entity>();
 		enemies = new ArrayList<Enemy>();
 		spritesheet = new Spritesheet("/spritesheet.png");
@@ -69,8 +76,6 @@ public class Game extends Canvas implements Runnable,KeyListener{
 		player = new Player(0, 0, 16, 16, spritesheet.getSprite(32, 0, 16, 17));
 		
 		world = new World("/map.png");
-		
-		
 		
 		entities.add(player);
 	}
@@ -133,12 +138,23 @@ public class Game extends Canvas implements Runnable,KeyListener{
 				
 				if(Entity.isColidding(player, entity)) {
 					
-					Player.life += 8;
+					Game.player.life += 8;
 					
-					if(Player.life >= 100) {
+					if(Game.player.life >= 100) {
 						
-						Player.life = 100;
+						Game.player.life = 100;
 					}
+					
+					iterator.remove();
+				}
+			}
+			
+			if(entity instanceof Bullet) 
+			{
+				
+				if(Entity.isColidding(player, entity)) {
+					
+					Player.ammo+=12;
 					
 					iterator.remove();
 				}
@@ -176,11 +192,14 @@ public class Game extends Canvas implements Runnable,KeyListener{
 		
 		//Graphics2D g2 = (Graphics2D) g;
 
-		ui.render(g);
+		ui.render(g, Game.player);
 		
 		g.dispose();
+		
 		g = bs.getDrawGraphics();
 		g.drawImage(image, 0, 0, WIDTH * SCALE, HEIGHT * SCALE, null);
+		
+		ui.renderPosDraw(g);
 		
 		bs.show();
 	}

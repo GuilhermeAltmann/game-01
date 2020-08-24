@@ -15,12 +15,19 @@ public class Player extends Entity{
 	private int dir = RIGHT_DIR;
 	public double speed = 2;
 	
-	public static double life = 100, maxLife = 100;
+	public double life = 100, maxLife = 100;
 	
 	private int frames = 0, maxFrames = 5, index = 0, maxIndex = 3;
 	private boolean moved = false;
 	private BufferedImage[] rightPlayer;
 	private BufferedImage[] leftPlayer;
+	
+	public static BufferedImage playerDamage = Game.spritesheet.getSprite(0, 17, 16, 17);
+	
+	public static int ammo = 0;
+	
+	public int damageFrames = 0;
+	public boolean isDamaged = false;
 	
 	public Player(double x, double y, int width, int height, BufferedImage sprite) {
 		super(x, y, width, height, sprite);
@@ -75,48 +82,46 @@ public class Player extends Entity{
 			
 		}
 		
-		//checkItems();
+		
+		if(isDamaged) {
+			
+			damageFrames++;
+			
+			if(damageFrames >= 10) {
+				
+				damageFrames = 0;
+				isDamaged = false;
+			}
+		}
+		
+		if(life <= 0 ) {
+			
+			Game.initGame();
+		}
+		
 		
 		Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/2), 0, (World.WIDTH * 16) - Game.WIDTH);
 		Camera.y = Camera.clamp(this.getY() - (Game.HEIGHT/2), 0, (World.HEIGHT * 17)  - Game.HEIGHT);
 	}
 	
-//	public void checkItems() 
-//	{
-//		
-//
-//		for(Iterator<Entity> iterator = Game.entities.iterator(); iterator.hasNext();) 
-//		{
-//			
-//			Entity entity = iterator.next();
-//			if(entity instanceof LifePack) 
-//			{
-//				
-//				if(Entity.isColidding(this, entity)) {
-//					
-//					life += 8;
-//					
-//					if(life >= 100) {
-//						
-//						life = 100;
-//					}
-//					
-//					iterator.remove();
-//				}
-//			}
-//		}
-//	}
 	
 	@Override
 	public void render(Graphics g) {
 		
-		if(dir == RIGHT_DIR) {
+		if(!isDamaged) {
 			
-			g.drawImage(rightPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
-		}else if(dir == LEFT_DIR){
+			if(dir == RIGHT_DIR) {
+				
+				g.drawImage(rightPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+			}else if(dir == LEFT_DIR){
+				
+				g.drawImage(leftPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+			}
+		}else {
 			
-			g.drawImage(leftPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+			g.drawImage(playerDamage, this.getX() - Camera.x, this.getY() - Camera.y, null);
 		}
+		
 		
 	}
 
