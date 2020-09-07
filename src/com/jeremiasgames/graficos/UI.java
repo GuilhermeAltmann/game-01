@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 
 import com.jeremiasgames.entities.Player;
+import com.jeremiasgames.main.Game;
 
 public class UI {
 
@@ -27,6 +28,6 @@ public class UI {
 		
 		g.setFont(new Font("arial", Font.BOLD, 20));
 		g.setColor(Color.WHITE);
-		g.drawString("Munição: " + Player.ammo, 605, 20);
+		g.drawString("Munição: " + Game.player.ammo, 605, 20);
 	}
 }

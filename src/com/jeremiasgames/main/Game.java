@@ -19,10 +19,12 @@ import java.util.Random;
 import javax.swing.JFrame;
 
 import com.jeremiasgames.entities.Bullet;
+import com.jeremiasgames.entities.BulletShoot;
 import com.jeremiasgames.entities.Enemy;
 import com.jeremiasgames.entities.Entity;
 import com.jeremiasgames.entities.LifePack;
 import com.jeremiasgames.entities.Player;
+import com.jeremiasgames.entities.Weapon;
 import com.jeremiasgames.graficos.Spritesheet;
 import com.jeremiasgames.graficos.UI;
 import com.jeremiasgames.world.World;
@@ -43,6 +45,7 @@ public class Game extends Canvas implements Runnable,KeyListener{
 	public static List<Entity> entities;
 	public static List<Enemy> enemies;
 	public static Spritesheet spritesheet;
+	public static List<BulletShoot> bullets;
 	public static World world;
 	
 	public static Random rand;
@@ -71,6 +74,8 @@ public class Game extends Canvas implements Runnable,KeyListener{
 		
 		entities = new ArrayList<Entity>();
 		enemies = new ArrayList<Enemy>();
+		bullets = new ArrayList<BulletShoot>();
+		
 		spritesheet = new Spritesheet("/spritesheet.png");
 		
 		player = new Player(0, 0, 16, 16, spritesheet.getSprite(32, 0, 16, 17));
@@ -121,8 +126,32 @@ public class Game extends Canvas implements Runnable,KeyListener{
 			entity.tick();
 		}
 		
+		for(Iterator<BulletShoot> iterator = Game.bullets.iterator(); iterator.hasNext();) {
+			
+			BulletShoot bullet = iterator.next();
+			bullet.tick();
+		}
+		
 		checkItems();
+		
+		checkBulletLife();
 
+	}
+	
+	public void checkBulletLife() 
+	{
+		for(Iterator<BulletShoot> iterator = bullets.iterator(); iterator.hasNext();) 
+		{
+
+			BulletShoot bullet = iterator.next();
+			
+			if(bullet.getCurLife() >= bullet.getLife()) 
+			{
+				
+				iterator.remove();
+			}
+		}
+		
 	}
 	
 	public void checkItems() 
@@ -131,7 +160,7 @@ public class Game extends Canvas implements Runnable,KeyListener{
 
 		for(Iterator<Entity> iterator = entities.iterator(); iterator.hasNext();) 
 		{
-			
+
 			Entity entity = iterator.next();
 			if(entity instanceof LifePack) 
 			{
@@ -154,7 +183,18 @@ public class Game extends Canvas implements Runnable,KeyListener{
 				
 				if(Entity.isColidding(player, entity)) {
 					
-					Player.ammo+=12;
+					Game.player.ammo+=12;
+					
+					iterator.remove();
+				}
+			}
+			
+			if(entity instanceof Weapon) 
+			{
+				
+				if(Entity.isColidding(player, entity)) {
+					
+					Game.player.getWeapon();
 					
 					iterator.remove();
 				}
@@ -182,6 +222,11 @@ public class Game extends Canvas implements Runnable,KeyListener{
 		for(Entity entity: entities) {
 			
 			entity.render(g);
+		}
+		
+		for(BulletShoot bshoot : bullets) {
+		
+			bshoot.render(g);
 		}
 		//g.setColor(Color.CYAN);
 		//g.fillRect(20, 20, 80, 80);
@@ -289,6 +334,10 @@ public class Game extends Canvas implements Runnable,KeyListener{
 		}else if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W) {
 			
 			player.up = false;
+		}
+		
+		if(e.getKeyCode() == KeyEvent.VK_X){
+			player.shoot = true;
 		}
 	}
 
